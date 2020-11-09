@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas import DataFrame
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import math
@@ -21,14 +22,23 @@ def load_data(sphere=True):
     TMZ2 = pd.read_csv('./data/TMZ2.csv', header=1)
     TMZ3 = pd.read_csv('./data/TMZ3.csv', header=1)
 
-    patients_data = [PCV1, PCV2, PCV3, TMZ1, TMZ2, TMZ3, RT1, RT2, RT3]
+    loaded_data = [PCV1, PCV2, PCV3, TMZ1, TMZ2, TMZ3, RT1, RT2, RT3]
 
-    if sphere:
-        for group in patients_data:
-            headers = list(group.columns)
-            for i in range(0, len(headers) - 1, 2):
-                data = sorted(zip(group[headers[i]], group[headers[i + 1]]))
+    patients_data = []
+
+    for group in loaded_data:
+        headers = list(group.columns)
+        group_data = []
+        for i in range(0, len(headers) - 1, 2):
+            data = sorted(zip(group[headers[i]], group[headers[i + 1]]))
+            x = [k for k, v in list(data)]
+            if sphere:
                 y = [mtd2sphere(v) for k, v in list(data)]
+            else:
+                y = [v for k, v in list(data)]
+            group_data.append(x)
+            group_data.append(y)
+        patients_data.append(DataFrame(group_data).transpose())
 
     return patients_data
 
@@ -46,9 +56,8 @@ def make_plot(patients_data, sphere=True):
 
         for i in range(0, len(headers) - 1, 2):
 
-            data = sorted(zip(key[headers[i]], key[headers[i + 1]]))
-            x = [k for k, v in list(data)]
-            y = [v for k, v in list(data)]
+            x = list(key[headers[i]])
+            y = list(key[headers[i + 1]])
 
             if sphere:
                 y_title = 'Volume [mm^3]'
