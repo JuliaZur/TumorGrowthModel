@@ -41,7 +41,7 @@ class Therapy(Enum):
     PCV = "1-(2-chloroethyl)-3-cyclohexyl-l-nitrosourea, and vincristine chemotherapy"
     RT = "radiotherapy"
 
-
+# tumorGrowthModel = TumorGrowthModel(1, 20, 80, 0, 100, 0.1, 0.1, 0.05, 0.1, 0.3, 0.1)
 class TumorGrowthModel:
     def __init__(self, C0, P0, Q0, QP0, K0, lambda_P, k_PQ, k_QP_P, delta_QP, gamma, KDE):
         self.K0 = K0
@@ -90,7 +90,7 @@ class TumorGrowthModel:
         return data
 
     def distance(self, x, y):
-        return abs(x["data"] - y["data"])
+        return abs(x["dPdT"] - y["data"])
 
     def parameters_inference(self):
         abc = pyabc.ABCSMC(self.model, self.parameter_priors, self.distance)
