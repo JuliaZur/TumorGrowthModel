@@ -1,6 +1,6 @@
 import pyabc
 from enum import Enum
-import plotly as plt
+import matplotlib.pyplot as plt
 import os
 import tempfile
 
@@ -19,7 +19,7 @@ delta_QP - constant rate of elimination of QP tissue
 k_PQ - constant rate of transfer from P to Q tissue
 K - maximal tumor size
 
-Parameters to estimate: (lambda_P, k_PQ, k_QP_P,delta_QP,gamma,KDE)
+Parameters to estimate: (P, Q, lambda_P, k_PQ, k_QP_P,delta_QP,gamma,KDE)
 
 Starting values:
 P0 = P(t=0)
@@ -95,8 +95,7 @@ class TumorGrowthModel:
     def parameters_inference(self):
         abc = pyabc.ABCSMC(self.model, self.parameter_priors, self.distance)
 
-        db_path = ("sqlite:///" +
-                   os.path.join(tempfile.gettempdir(), "test.db"))
+        db_path = ("sqlite:///" + os.path.join(tempfile.gettempdir(), "tumor.db"))
         data = {'data': [1, 7, 41, 0]}
         abc.new(db_path, data)
 
@@ -115,5 +114,5 @@ class TumorGrowthModel:
 
 
 if __name__ == '__main__':
-    tumorGrowthModel = TumorGrowthModel(1, 20, 80, 0, 100, 0.1, 0.1, 0.05, 0.1, 0.3, 0.1)
+    tumorGrowthModel = TumorGrowthModel(1, 7, 41, 0, 100, 0.1, 0.1, 0.05, 0.1, 0.3, 0.1)
     tumorGrowthModel.parameters_inference()
